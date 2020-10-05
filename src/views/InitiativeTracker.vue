@@ -9,7 +9,7 @@
             <button v-else @click.prevent="toggleNewCharacterForm" class="border-gray-400 border bg-white px-4 py-3 shadow rounded text-center hover:bg-gray-100 transition duration-200">
                 <span>Close Character Creator</span>
             </button>
-            <button v-if="round > 0" @click.prevent="endRound" class="border-gray-400 border bg-white px-4 py-3 shadow rounded text-center hover:bg-gray-100 transition duration-200">
+            <button v-if="showRoundTracker" @click.prevent="endRound" class="border-gray-400 border bg-white px-4 py-3 shadow rounded text-center hover:bg-gray-100 transition duration-200">
                 <span>End Round</span>
             </button>
             <button v-else @click.prevent="startRound" class="border-gray-400 border bg-white px-4 py-3 shadow rounded text-center hover:bg-gray-100 transition duration-200">
@@ -18,25 +18,25 @@
         </div>
     
     </header>
-    <CreateCharacterForm v-if="showCharacterForm" @submitted="createNewCharacter($event)" @form-close="toggleNewCharacterForm"></CreateCharacterForm>
+    <CreateCharacterForm ref="characterForm" v-show="showCharacterForm" @submitted="createNewCharacter($event)" @form-close="toggleNewCharacterForm"></CreateCharacterForm>
     <div class="characters space-y-8">
         <Character
             v-for="(character, i) in charsByInitiative" 
             :key="i"
             :character="character"
-            :class="activeCharacter == i && round > 0 ? 'bg-gray-200' : null"
             @increase-hp="(character.currentHP !== character.maxHP) ? character.currentHP++ : false"
             @decrease-hp="(character.currentHP !== 0) ? character.currentHP-- : false"
             @reset-hp="character.currentHP = character.maxHP"
+            @edit-character="editCharacter(character)"
             @delete-character="deleteCharacter(character)"
         ></Character>
     </div>
     <RoundTracker 
-        v-if="round > 0" 
+        v-if="showRoundTracker" 
         :turnLength="characters.length" 
-        @next-turn="this.activeCharacter++" 
-        @new-round="this.activeCharacter = 0" 
-        @end-round="this.round = 0"
+        @next-turn="updateActiveByInitiative($event.turn - 1)" 
+        @new-round="startRound()" 
+        @end-round="endRound()"
     ></RoundTracker>
   </div>
 </template>
@@ -70,16 +70,27 @@ export default {
             },
             {
                 name: 'Furiosa Morningwood',
-                initiative: 16,
+                initiative: 18,
                 details: "Details...",
                 active: false,
                 maxHP: 20,
                 currentHP: 20,
                 conditions: [ ]
             },
+            {
+                name: 'Testtttting...',
+                initiative: 12,
+                details: "Details...",
+                active: false,
+                maxHP: 20,
+                currentHP: 20,
+                conditions: [
+                    'Enfeebled',
+                    'Flat-Footed'
+                 ]
+            },
         ],
-        activeCharacter: null,
-        round: 0,
+        showRoundTracker: false
     }
   },
   methods: {
@@ -87,6 +98,7 @@ export default {
         if (this.characters.every(character => character.name !== newCharacter.name) ) 
             newCharacter.currentHP = newCharacter.maxHP;
             this.characters.push(newCharacter);
+            this.toggleNewCharacterForm();
       },
       toggleNewCharacterForm() {
           this.showCharacterForm = ! this.showCharacterForm
@@ -95,14 +107,22 @@ export default {
           this.activeCharacter = i
       },
       startRound() {
-          this.round = 1;
-          this.setActive(0)
+          this.showRoundTracker = true;
+          this.updateActiveByInitiative(0);
       },
       endRound() {
-          this.round = 0;
+          this.showRoundTracker = false;
+      },
+      editCharacter(c) {
+          this.toggleNewCharacterForm();
+          this.$refs.characterForm.newCharacter = c;
       },
       deleteCharacter(c) {
           this.characters = this.characters.filter(char => char !== c);
+      },
+      updateActiveByInitiative(i) {
+        let activeChar = this.charsByInitiative[i];
+        this.characters.forEach( char => char.active = (char.name == activeChar.name) ? true : false )
       }
   },
   computed: {

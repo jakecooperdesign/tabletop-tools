@@ -1,6 +1,11 @@
 <template>
     <div class="group">
-        <dl class="character relative bg-white border-gray-400 border flex items-stretch rounded-lg shadow z-10">
+        <dl 
+            class="character relative bg-white border-gray-400 border flex items-stretch rounded-lg shadow z-10" 
+            :class="{
+                'bg-gray-200': character.active ? true : false, 
+                'bg-gray-900 text-white': character.currentHP == 0 ? true : false
+            }">
             <div class="initiative px-8 py-6 text-center w-40 flex flex-col justify-center items-center">
                 <dd class="text-3xl">{{character.initiative}}</dd>
                 <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">Initiative</dt>
@@ -9,9 +14,10 @@
                 <dd class="text-3xl">{{character.name.length > 30 ? character.name.substr(0,30).concat('...') : character.name}}</dd>
                 <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">Name</dt>
             </div>
-            <div class="conditions px-8 py-6 border-l border-gray-400 flex-1 flex flex-col justify-center">
-                <dd class="text-3xl">{{ character.conditions.length > 0 ? 'many' : 'None' }}</dd>
-                <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">conditions</dt>
+            <div v-if="character.conditions.length > 0" class="conditions px-8 py-6 flex-1 flex flex-col items-end space-y-2">
+                <div v-for="(condition,i) in character.conditions" :key="i">
+                    <div class="text-xs text-white uppercase tracking-widest font-medium inline-block bg-gray-500 shadow rounded px-3 py-2">{{condition}}</div>
+                </div>
             </div>
             <div class="hit-points px-8 py-6 border-l border-gray-400 flex justify-center items-center space-x-4 w-64">
                 <div class="">
@@ -39,8 +45,8 @@
         </dl>
         <div class="controls text-xs flex justify-end transition-all duration-500 h-20 -mt-20 group-hover:mt-0 opacity-0 group-hover:opacity-100">
             <div class="space-x-4 flex justify-center items-center bg-gray-300 px-6 pb-4 pt-8 -mt-4 rounded shadow border border-gray-400">
-                <button class="w-32 px-6 py-2 bg-gray-800 border border-gray-900 text-white hover:bg-black transition duration-200 rounded shadow">Edit</button>
-                <button class="w-32 px-6 py-2 bg-gray-800 border border-gray-900 text-white hover:bg-black transition duration-200 rounded shadow">Delete</button>
+                <button @click="$emit('edit-character', character)" class="w-32 px-6 py-2 bg-gray-800 border border-gray-900 text-white hover:bg-black transition duration-200 rounded shadow">Edit</button>
+                <button @click="$emit('delete-character', character)" class="w-32 px-6 py-2 bg-gray-800 border border-gray-900 text-white hover:bg-black transition duration-200 rounded shadow">Delete</button>
             </div>
         </div>
     </div>

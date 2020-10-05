@@ -1,20 +1,38 @@
 <template>
-    <form @submit.prevent="formSubmitted" class="character relative bg-white border-gray-400 border flex items-stretch rounded-lg overflow-hidden shadow">
-        <div class="name p-8 flex-1">
-            <input type="text" v-model="newCharacter.name" class="px-4 py-2 border border-gray-400 rounded-lg mb-2 text-4xl w-full block">
-            <p class="pl-2 text-xs uppercase font-bold text-gray-600 tracking-wider">Name</p>
+    <form @submit.prevent="formSubmitted" class="shadow-lg rounded-lg border border-gray-400 space-y-4 max-w-4xl mx-auto">
+        <header class="rounded-t-lg bg-gray-200 p-6 border-b border-gray-400">
+            <h2 class="text-2xl font-medium text-gray-800">
+                Character Creator
+            </h2>
+        </header>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="text-sm text-gray-700 font-medium">Name</label>
+                    <input type="text" v-model="newCharacter.name" class="mt-2 p-2 border border-gray-400 rounded-lg mb-2 text-lg w-full block">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-700 font-medium">Initiative</label>
+                    <input type="number" v-model.number="newCharacter.initiative" class="mt-2 p-2 border border-gray-400 rounded-lg mb-2 text-lg w-full block">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-700 font-medium">Max HP</label>
+                    <input type="number" v-model.number="newCharacter.maxHP" class="mt-2 p-2 border border-gray-400 rounded-lg mb-2 text-lg w-full block">
+                </div>
+                <div class="col-span-2">
+                    <p class="text-sm text-gray-700 font-medium">Conditions</p>
+                    <div class="grid gap-4 grid-cols-5 mt-4">
+                        <div v-for="(condition,i) in conditions" :key="i">
+                            <label :for="condition" class="cursor-pointer border-gray-300 border px-3 py-2 rounded-md hover:bg-gray-300 w-full block shadow-sm">
+                                <input v-model="newCharacter.conditions" type="checkbox" :name="condition" :id="condition" :value="condition"> 
+                                <span class="ml-2">{{condition}}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="initiative p-8 border-l border-gray-400 w-40">
-            <input type="number" v-model.number="newCharacter.initiative" class="px-4 py-2 border border-gray-400 rounded-lg mb-2 text-4xl w-full block">
-            <p class="pl-2 text-xs uppercase font-bold text-gray-600 tracking-wider">Initiative</p>
-        </div>
-        <div class="hit-points p-8 border-l border-gray-400 w-40">
-            <input type="number" v-model.number="newCharacter.maxHP" class="px-4 py-2 border border-gray-400 rounded-lg mb-2 text-4xl w-full block">
-            <p class="pl-2 text-xs uppercase font-bold text-gray-600 tracking-wider">Max HP</p>
-        </div>
-        <div class="name border-l border-gray-400">
-            <input type="submit" value="Save Character" class="p-8 h-full w-full hover:bg-gray-400">
-        </div>
+        <input type="submit" value="Save Character" class="p-6 rounded-b-lg cursor-pointer transition duration-200 bg-blue-600 text-white h-full w-full hover:bg-gray-800">
     </form>
 </template>
 
@@ -23,9 +41,9 @@
 let blankCharacter = () => ({
     name: '',
     details: '',
-    initiative: 0,
-    maxHP: 0,
-    currentHP: 0,
+    initiative: 1,
+    maxHP: 1,
+    currentHP: 1,
     conditions: [],
 });
 
@@ -33,7 +51,31 @@ export default {
     props: ['setup'],
     data() {
         return {
-            newCharacter: blankCharacter()
+            newCharacter: blankCharacter(),
+            conditions: [
+                'Friendly',
+                'Helpful',
+                'Hostile',
+                'Indifferent',
+                'Unfriendly',
+                'Doomed',
+                'Dying',
+                'Unconscious',
+                'Wounded',
+                'Hidden',
+                'Observed',
+                'Undetected',
+                'Unnoticed',
+                'Clumsy',
+                'Drained',
+                'Enfeebled',
+                'Stupefied',
+                'Blinded',
+                'Concealed',
+                'Dazzled',
+                'Deafened',
+                'Invisible'
+            ]
         }
     },
     methods: {
