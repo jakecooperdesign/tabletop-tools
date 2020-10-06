@@ -9,6 +9,10 @@
                 <dd class="text-2xl font-bold">{{turn}} / {{turnLength}}</dd>
                 <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">Turns in Round</dt>
             </div>
+            <div class="round p-8 border-l border-gray-600">
+                <dd class="text-2xl font-bold">{{elapsedTime}}</dd>
+                <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">Elapsed Time</dt>
+            </div>
         </div>
         <div class="controls p-8 space-x-4">
             <button @click.prevent="nextTurn" class="px-6 py-2 bg-gray-600 hover:bg-black text-white rounded shadow">Next Turn</button>
@@ -23,7 +27,8 @@ export default {
     data() {
         return {
             round: 1,
-            turn: 1
+            turn: 1,
+            turnDurationSeconds: 6
         }
     },
     methods: {
@@ -41,6 +46,12 @@ export default {
             this.$emit('end-round');
             this.round = 0;
             this.turn = 1;
+        }
+    },
+    computed: {
+        elapsedTime() {
+            let seconds = this.turnDurationSeconds * this.turnLength * (this.round - 1) + this.turn * this.turnDurationSeconds;
+            return `${Math.floor(seconds/60)}:${(seconds % 60).toString().padStart(2,'0')}`
         }
     }
 }

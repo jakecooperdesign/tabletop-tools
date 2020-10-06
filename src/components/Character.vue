@@ -14,7 +14,7 @@
                 <dd class="text-3xl">{{character.name.length > 30 ? character.name.substr(0,30).concat('...') : character.name}}</dd>
                 <dt class="text-xs uppercase font-bold text-gray-600 tracking-wider">Name</dt>
             </div>
-            <div v-if="character.conditions.length > 0" class="conditions px-8 py-6 flex-1 flex flex-col items-end space-y-2">
+            <div v-if="character.conditions.length > 0" class="conditions px-8 py-6 flex-1 flex flex-col justify-center items-end space-y-2">
                 <div v-for="(condition,i) in character.conditions" :key="i">
                     <div class="text-xs text-white uppercase tracking-widest font-medium inline-block bg-gray-500 shadow rounded px-3 py-2">{{condition}}</div>
                 </div>

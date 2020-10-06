@@ -18,7 +18,7 @@
         </div>
     
     </header>
-    <CreateCharacterForm ref="characterForm" v-show="showCharacterForm" @submitted="createNewCharacter($event)" @form-close="toggleNewCharacterForm"></CreateCharacterForm>
+    <CreateCharacterForm ref="characterForm" v-show="showCharacterForm" @submitted="characterFormSubmitted($event)" @form-close="toggleNewCharacterForm"></CreateCharacterForm>
     <div class="characters space-y-8">
         <Character
             v-for="(character, i) in charsByInitiative" 
@@ -86,7 +86,6 @@ export default {
                 currentHP: 20,
                 conditions: [
                     'Enfeebled',
-                    'Flat-Footed'
                  ]
             },
         ],
@@ -98,7 +97,6 @@ export default {
         if (this.characters.every(character => character.name !== newCharacter.name) ) 
             newCharacter.currentHP = newCharacter.maxHP;
             this.characters.push(newCharacter);
-            this.toggleNewCharacterForm();
       },
       toggleNewCharacterForm() {
           this.showCharacterForm = ! this.showCharacterForm
@@ -113,9 +111,16 @@ export default {
       endRound() {
           this.showRoundTracker = false;
       },
+      characterFormSubmitted({character, method}) {
+          if (method == 'new') {
+              this.createNewCharacter(character);
+          }
+          this.toggleNewCharacterForm();
+      },
       editCharacter(c) {
           this.toggleNewCharacterForm();
           this.$refs.characterForm.newCharacter = c;
+          this.$refs.characterForm.editing = true;
       },
       deleteCharacter(c) {
           this.characters = this.characters.filter(char => char !== c);

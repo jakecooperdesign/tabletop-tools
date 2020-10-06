@@ -51,6 +51,7 @@ export default {
     props: ['setup'],
     data() {
         return {
+            editing: false,
             newCharacter: blankCharacter(),
             conditions: [
                 'Friendly',
@@ -80,7 +81,7 @@ export default {
     },
     methods: {
         formSubmitted() {
-            this.$emit('submitted', this.newCharacter);
+            this.$emit('submitted', {character: this.newCharacter, method: this.editing ? 'update': 'new' });
             this.newCharacter = blankCharacter();
         }
     }
