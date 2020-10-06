@@ -1,4 +1,4 @@
-# dnd-tools
+# Tabletop Tools
 
 ## Project setup
 ```
